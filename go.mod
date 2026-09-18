@@ -1,3 +1,3 @@
-module GO_MAIN
+module main.go
 
 go 1.26.6

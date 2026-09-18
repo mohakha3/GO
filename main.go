@@ -1,31 +1,27 @@
 package main
 
 import (
+	"flag"
 	"fmt"
-	"net"
-	"os"
 )
 
+// RunApp processes variables using pointers extracted from the flag package
+func RunApp(name string, verbose bool) string {
+	if verbose {
+		return fmt.Sprintf("[DEBUG ENGINE ACTIVE] Welcome Senior Leader, %s.", name)
+	}
+	return fmt.Sprintf("Hello, %s.", name)
+}
+
 func main() {
-	// Look up the IP addresses for Google's public DNS hostname
-	ips, err := net.LookupIP("dns.google")
-	if err != nil {
-		fmt.Println("Error looking up IP:", err)
-		return
-	}
+	// flag.String returns a *string (pointer), NOT a plain string value
+	namePtr := flag.String("name", "Guest", "The name of the operator")
+	verbosePtr := flag.Bool("verbose", false, "Enable heavy debug logging")
 
-	// Format the output string
-	output := fmt.Sprintf("Google DNS IP addresses:\n")
-	for _, ip := range ips {
-		output += fmt.Sprintf("- %s\n", ip.String())
-	}
+	// This is the critical engine step—it parses the terminal arguments array
+	flag.Parse()
 
-	// Write the result to a text file named google_dns.txt
-	err = os.WriteFile("google_dns.txt", []byte(output), 0644)
-	if err != nil {
-		fmt.Println("Error writing file:", err)
-		return
-	}
-
-	fmt.Println("Successfully saved Google DNS IP to google_dns.txt!")
+	// We use the '*' operator to "dereference" the pointers and read the true value
+	result := RunApp(*namePtr, *verbosePtr)
+	fmt.Println(result)
 }
